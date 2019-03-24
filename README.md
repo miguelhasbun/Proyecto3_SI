@@ -1,2 +1,2 @@
-# Deep-Learning
-Deep learning related experimental projects 
+# Clasificación de imágenes
+Clasifica imágenes de perros según su raza 
