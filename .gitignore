@@ -1,0 +1,10 @@
+.DS_Store
+venv/
+Dogs-Breed-Classification/bottleneck/
+Dogs-Breed-Classification/dataset/
+Dogs-Breed-Classification/test/
+Dogs-Breed-Classification/summaries/
+
+
+
+
