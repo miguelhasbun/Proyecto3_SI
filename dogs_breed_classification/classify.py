@@ -10,6 +10,10 @@ import tensorflow as tf
 import sys
 import os
 import csv
+from PIL import Image
+from PIL import ImageFont
+from PIL import ImageDraw
+
 
 # Disable tensorflow compilation warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
@@ -17,7 +21,9 @@ os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 '''
 Classify images from test folder and predict dog breeds along with score.
 '''
-def classify_image(image_path, headers):
+
+
+def classify_image(image_path, headers, file_name, img):
     f = open('submit.csv','w')
     writer = csv.DictWriter(f, fieldnames = headers)
     writer.writeheader()
@@ -72,20 +78,46 @@ def classify_image(image_path, headers):
                     score = predictions[0][node_id]
                     print('%s (score = %.5f)' % (human_string, score))
                     row_dict[human_string] = score
+
+                human_string = label_lines[top_k[0]]
+                score2 = predictions[0][top_k[0]]
+                image_text = human_string + "\nscore = " + str(score2)
+                imagen = Image.open(img)
+                draw = ImageDraw.Draw(imagen)
+                font = ImageFont.truetype("arial.ttf", 25)
+                draw.text((0, 0), image_text, (255, 255, 255), font=font)
+                imagen.save(file_name)
+                imagen.show()
+
                 records.append(row_dict.copy())
                 writer.writerows(records)
     f.close()    
 
 def main():
-    test_data_folder = 'test'
-    
-    template_file = open('sample_submission.csv','r')
-    d_reader = csv.DictReader(template_file)
+    full_path = ''
+    file_name = ''
+    command = ''
 
-    #get fieldnames from DictReader object and store in list
-    headers = d_reader.fieldnames
-    template_file.close()
-    classify_image(test_data_folder, headers)
+    while command!= 'exit':
+        command = input('console>>')
+        if command == 'exit':
+            continue
+        elif command == 'image':
+            full_path = input('Ingrese el full path a la imagen: ')
+            file_name = input('Nombre de archivo con su extension: ')
+        else:
+            print('Unknown command. Please write '"image"' or '"exit"'')
+            continue
+
+        img = full_path + '/'+file_name
+        test_data_folder = full_path +"/"
+        template_file = open('sample_submission.csv','r')
+        d_reader = csv.DictReader(template_file)
+
+        #get fieldnames from DictReader object and store in list
+        headers = d_reader.fieldnames
+        template_file.close()
+        classify_image(test_data_folder, headers, file_name, img)
     
 
 if __name__ == '__main__':
